@@ -236,9 +236,10 @@ This project demonstrates practical experience with:
 
 ## Author
 
-**Subhan ALI **
+Subhan ALI 
+
 Computer Science Student | Software Developer | AI Engineer |
 
-GitHub:subhanaligrw444-rgb
+GitHub: @subhanaligrw444-rgb
 
 *Built as an academic software development project to demonstrate relational database design, SQL query development, and full-stack web application development.*
