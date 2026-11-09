@@ -1,0 +1,10 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\airport",
+    "\\airport\\Data",
+    "\\airport\\Migrations"
+  ],
+  "SelectedNode": "\\airport\\Migrations\\20260516122049_AddAircraftsTable.cs",
+  "PreviewInSolutionExplorer": false
+}

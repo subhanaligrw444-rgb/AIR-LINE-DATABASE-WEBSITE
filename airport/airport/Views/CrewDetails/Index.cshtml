@@ -1,0 +1,126 @@
+@model IEnumerable<airline_system.Models.CrewDetails>
+@{
+    ViewData["Title"] = "Crew Details";
+    var flights = ViewBag.Flights as List<airline_system.Models.Flight>;
+    var staffs  = ViewBag.Staffs  as List<airline_system.Models.Staff>;
+}
+
+<div class="page-header">
+    <div class="page-header-icon">👩‍✈️</div>
+    <div>
+        <h1>CREW ASSIGNMENTS</h1>
+        <p>Assign and manage crew members for scheduled flights</p>
+    </div>
+</div>
+
+<!-- ADD FORM -->
+<div class="card">
+    <div class="card-title">➕ Assign Crew to Flight</div>
+    <form asp-controller="CrewDetails" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Flight</label>
+                <select name="Flight_ID" required>
+                    <option value="">— Select Flight —</option>
+                    @if (flights != null)
+                    {
+                        @foreach (var f in flights)
+                        {
+                            <option value="@f.Flight_ID">@f.Flight_No</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Staff Member</label>
+                <select name="Staff_ID" required>
+                    <option value="">— Select Staff —</option>
+                    @if (staffs != null)
+                    {
+                        @foreach (var s in staffs)
+                        {
+                            <option value="@s.Staff_ID">@s.Name (@s.Role)</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Crew Role</label>
+                <select name="Role" required>
+                    <option value="">— Select Role —</option>
+                    <option value="Pilot">Pilot</option>
+                    <option value="Co-Pilot">Co-Pilot</option>
+                    <option value="Cabin Crew">Cabin Crew</option>
+                    <option value="Flight Engineer">Flight Engineer</option>
+                    <option value="Purser">Purser</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Shift</label>
+                <select name="Shift" required>
+                    <option value="">— Select Shift —</option>
+                    <option value="Morning">Morning</option>
+                    <option value="Evening">Evening</option>
+                    <option value="Night">Night</option>
+                </select>
+            </div>
+        </div>
+        <div class="btn-row">
+            <button type="submit" class="btn btn-gold">👩‍✈️ Assign Crew</button>
+            <button type="reset"  class="btn btn-ghost">✕ Clear</button>
+        </div>
+    </form>
+</div>
+
+<!-- TABLE -->
+<div class="card">
+    <div class="card-title">📋 All Crew Assignments — @Model.Count() Records</div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#ID</th>
+                    <th>Flight</th>
+                    <th>Staff Name</th>
+                    <th>Staff Role</th>
+                    <th>Crew Role</th>
+                    <th>Shift</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr class="empty-msg"><td colspan="7">No crew assignments yet. Assign one above.</td></tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        string shiftStyle = item.Shift switch {
+                            "Morning" => "badge-gold",
+                            "Evening" => "badge-camel",
+                            "Night"   => "badge-silver",
+                            _         => "badge-silver"
+                        };
+                        <tr>
+                            <td><span class="badge badge-silver">@item.Schedule_ID</span></td>
+                            <td><strong style="color:var(--gold)">@item.Flight?.Flight_No</strong></td>
+                            <td>@item.Staff?.Name</td>
+                            <td><span class="badge badge-camel">@item.Staff?.Role</span></td>
+                            <td><span class="badge badge-blue">@item.Role</span></td>
+                            <td><span class="badge @shiftStyle">@item.Shift</span></td>
+                            <td>
+                                <form asp-controller="CrewDetails" asp-action="Delete" asp-route-id="@item.Schedule_ID" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-delete" onclick="return confirm('Remove crew assignment #@item.Schedule_ID?')">🗑 Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

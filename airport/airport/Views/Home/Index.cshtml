@@ -1,0 +1,197 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<style>
+    .hero {
+        text-align: center;
+        padding: 50px 20px 40px;
+        background: linear-gradient(135deg, var(--black2) 0%, #1a1500 100%);
+        border: 1px solid rgba(201,168,76,0.2);
+        border-radius: 14px;
+        margin-bottom: 32px;
+        position: relative;
+        overflow: hidden;
+    }
+    .hero::before {
+        content: '✈';
+        position: absolute;
+        font-size: 18em;
+        color: rgba(201,168,76,0.04);
+        top: -40px;
+        right: -40px;
+        pointer-events: none;
+    }
+    .hero-title {
+        font-size: 2.5em;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--gold), var(--camel3), var(--silver));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+    }
+    .hero-sub {
+        color: var(--silver);
+        font-size: 1em;
+        letter-spacing: 1px;
+        opacity: 0.7;
+    }
+    .hero-divider {
+        width: 80px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--gold), var(--camel));
+        margin: 18px auto;
+        border-radius: 2px;
+    }
+
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 32px;
+    }
+    .stat-card {
+        background: linear-gradient(145deg, var(--black2), var(--black3));
+        border: 1px solid rgba(201,168,76,0.15);
+        border-radius: 12px;
+        padding: 22px 20px;
+        text-align: center;
+        transition: all 0.3s;
+        cursor: default;
+    }
+    .stat-card:hover {
+        border-color: var(--gold);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(201,168,76,0.15);
+    }
+    .stat-icon { font-size: 2em; margin-bottom: 10px; }
+    .stat-label { font-size: 0.75em; color: var(--silver); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+    .stat-value { font-size: 1.8em; font-weight: 800; color: var(--gold); }
+
+    .module-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    }
+    .module-card {
+        background: linear-gradient(145deg, var(--black2), var(--black3));
+        border: 1px solid rgba(201,168,76,0.12);
+        border-top: 3px solid var(--gold);
+        border-radius: 12px;
+        padding: 28px 20px;
+        text-align: center;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s;
+        display: block;
+    }
+    .module-card:hover {
+        border-top-color: var(--camel3);
+        transform: translateY(-6px);
+        box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+        background: linear-gradient(145deg, #1f1a00, var(--black3));
+    }
+    .module-card .m-icon { font-size: 2.5em; margin-bottom: 14px; display: block; }
+    .module-card h3 { color: var(--gold); font-size: 1em; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; }
+    .module-card p { color: #666; font-size: 0.82em; }
+
+    .section-label {
+        font-size: 0.78em;
+        font-weight: 700;
+        color: var(--camel3);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .section-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(201,168,76,0.15);
+    }
+
+    @@media (max-width: 900px) {
+        .stat-grid { grid-template-columns: repeat(2, 1fr); }
+        .module-grid { grid-template-columns: repeat(2, 1fr); }
+        .hero-title { font-size: 1.8em; }
+    }
+    @@media (max-width: 480px) {
+        .stat-grid { grid-template-columns: repeat(2, 1fr); }
+        .module-grid { grid-template-columns: repeat(2, 1fr); }
+        .hero-title { font-size: 1.4em; }
+    }
+</style>
+
+<div class="hero">
+    <div class="hero-title">✈ SKYLINE AIR</div>
+    <div class="hero-divider"></div>
+    <div class="hero-sub">AIRLINE MANAGEMENT SYSTEM — CONTROL PANEL</div>
+</div>
+
+<div class="section-label">QUICK STATS</div>
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-icon">🛩️</div>
+        <div class="stat-label">Aircraft</div>
+        <div class="stat-value">—</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">✈️</div>
+        <div class="stat-label">Flights</div>
+        <div class="stat-value">—</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">👤</div>
+        <div class="stat-label">Passengers</div>
+        <div class="stat-value">—</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🎫</div>
+        <div class="stat-label">Tickets</div>
+        <div class="stat-value">—</div>
+    </div>
+</div>
+
+<div class="section-label">MODULES</div>
+<div class="module-grid">
+    <a class="module-card" asp-controller="Aircraft"    asp-action="Index">
+        <span class="m-icon">🛩️</span>
+        <h3>AIRCRAFT</h3>
+        <p>Manage fleet & registrations</p>
+    </a>
+    <a class="module-card" asp-controller="Airport"     asp-action="Index">
+        <span class="m-icon">🏢</span>
+        <h3>AIRPORTS</h3>
+        <p>View & manage airports</p>
+    </a>
+    <a class="module-card" asp-controller="Flight"      asp-action="Index">
+        <span class="m-icon">✈️</span>
+        <h3>FLIGHTS</h3>
+        <p>Schedule & track flights</p>
+    </a>
+    <a class="module-card" asp-controller="Passenger"   asp-action="Index">
+        <span class="m-icon">👤</span>
+        <h3>PASSENGERS</h3>
+        <p>Manage passenger records</p>
+    </a>
+    <a class="module-card" asp-controller="Staff"       asp-action="Index">
+        <span class="m-icon">👨‍✈️</span>
+        <h3>STAFF</h3>
+        <p>Crew & staff directory</p>
+    </a>
+    <a class="module-card" asp-controller="Ticket"      asp-action="Index">
+        <span class="m-icon">🎫</span>
+        <h3>TICKETS</h3>
+        <p>Book & manage tickets</p>
+    </a>
+    <a class="module-card" asp-controller="CrewDetails" asp-action="Index">
+        <span class="m-icon">👩‍✈️</span>
+        <h3>CREW DETAILS</h3>
+        <p>Assign crew to flights</p>
+    </a>
+</div>

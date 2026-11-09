@@ -1,0 +1,92 @@
+@model IEnumerable<airline_system.Models.Passenger>
+@{
+    ViewData["Title"] = "Passengers";
+}
+
+<div class="page-header">
+    <div class="page-header-icon">👤</div>
+    <div>
+        <h1>PASSENGER RECORDS</h1>
+        <p>Manage all passenger profiles and information</p>
+    </div>
+</div>
+
+<!-- ADD FORM -->
+<div class="card">
+    <div class="card-title">➕ Register New Passenger</div>
+    <form asp-controller="Passenger" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="Name" required placeholder="e.g., Ali Hassan" />
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="Email" required placeholder="e.g., ali@email.com" />
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" name="Phone_No" required placeholder="e.g., 03001234567" />
+            </div>
+            <div class="form-group">
+                <label>Passport Number</label>
+                <input type="text" name="Passport_No" required placeholder="e.g., AB1234567" />
+            </div>
+            <div class="form-group">
+                <label>Nationality</label>
+                <input type="text" name="Nationality" required placeholder="e.g., Pakistani" />
+            </div>
+        </div>
+        <div class="btn-row">
+            <button type="submit" class="btn btn-gold">👤 Register Passenger</button>
+            <button type="reset"  class="btn btn-ghost">✕ Clear</button>
+        </div>
+    </form>
+</div>
+
+<!-- TABLE -->
+<div class="card">
+    <div class="card-title">👥 All Passengers — @Model.Count() Records</div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#ID</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Passport No</th>
+                    <th>Nationality</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr class="empty-msg"><td colspan="7">No passengers registered yet. Add one above.</td></tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><span class="badge badge-silver">@item.Passenger_ID</span></td>
+                            <td><strong style="color:var(--silver2)">@item.Name</strong></td>
+                            <td style="color:var(--camel3)">@item.Email</td>
+                            <td>@item.Phone_No</td>
+                            <td><span class="badge badge-gold">@item.Passport_No</span></td>
+                            <td><span class="badge badge-camel">@item.Nationality</span></td>
+                            <td>
+                                <form asp-controller="Passenger" asp-action="Delete" asp-route-id="@item.Passenger_ID" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-delete" onclick="return confirm('Delete @item.Name?')">🗑 Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

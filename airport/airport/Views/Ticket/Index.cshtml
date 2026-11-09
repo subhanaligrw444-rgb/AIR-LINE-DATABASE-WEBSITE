@@ -1,0 +1,122 @@
+@model IEnumerable<airline_system.Models.Ticket>
+@{
+    ViewData["Title"] = "Tickets";
+    var flights    = ViewBag.Flights    as List<airline_system.Models.Flight>;
+    var passengers = ViewBag.Passengers as List<airline_system.Models.Passenger>;
+}
+
+<div class="page-header">
+    <div class="page-header-icon">🎫</div>
+    <div>
+        <h1>TICKET BOOKING</h1>
+        <p>Book and manage passenger flight tickets</p>
+    </div>
+</div>
+
+<!-- ADD FORM -->
+<div class="card">
+    <div class="card-title">➕ Book New Ticket</div>
+    <form asp-controller="Ticket" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Flight</label>
+                <select name="Flight_ID" required>
+                    <option value="">— Select Flight —</option>
+                    @if (flights != null)
+                    {
+                        @foreach (var f in flights)
+                        {
+                            <option value="@f.Flight_ID">@f.Flight_No</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Passenger</label>
+                <select name="Passenger_ID" required>
+                    <option value="">— Select Passenger —</option>
+                    @if (passengers != null)
+                    {
+                        @foreach (var p in passengers)
+                        {
+                            <option value="@p.Passenger_ID">@p.Name (@p.Passport_No)</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Travel Class</label>
+                <select name="Class" required>
+                    <option value="">— Select Class —</option>
+                    <option value="Economy">Economy</option>
+                    <option value="Business">Business</option>
+                    <option value="First">First Class</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Seat Number</label>
+                <input type="text" name="Seat_No" required placeholder="e.g., 12A" />
+            </div>
+            <div class="form-group">
+                <label>Price (PKR)</label>
+                <input type="number" name="Price" required placeholder="e.g., 25000" min="0" step="0.01" />
+            </div>
+        </div>
+        <div class="btn-row">
+            <button type="submit" class="btn btn-gold">🎫 Book Ticket</button>
+            <button type="reset"  class="btn btn-ghost">✕ Clear</button>
+        </div>
+    </form>
+</div>
+
+<!-- TABLE -->
+<div class="card">
+    <div class="card-title">🎫 All Tickets — @Model.Count() Booked</div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#ID</th>
+                    <th>Flight</th>
+                    <th>Passenger</th>
+                    <th>Class</th>
+                    <th>Seat</th>
+                    <th>Price (PKR)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr class="empty-msg"><td colspan="7">No tickets booked yet. Book one above.</td></tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        string classStyle = item.Class switch {
+                            "First"    => "badge-gold",
+                            "Business" => "badge-camel",
+                            _          => "badge-silver"
+                        };
+                        <tr>
+                            <td><span class="badge badge-silver">@item.Ticket_ID</span></td>
+                            <td><strong style="color:var(--gold)">@item.Flight?.Flight_No</strong></td>
+                            <td>@item.Passenger?.Name</td>
+                            <td><span class="badge @classStyle">@item.Class</span></td>
+                            <td><span class="badge badge-silver">@item.Seat_No</span></td>
+                            <td style="color:var(--gold2); font-weight:700">@item.Price.ToString("N0")</td>
+                            <td>
+                                <form asp-controller="Ticket" asp-action="Delete" asp-route-id="@item.Ticket_ID" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-delete" onclick="return confirm('Delete ticket #@item.Ticket_ID?')">🗑 Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

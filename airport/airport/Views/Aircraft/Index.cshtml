@@ -1,0 +1,80 @@
+@model IEnumerable<airline_system.Models.Aircraft>
+@{
+    ViewData["Title"] = "Aircraft";
+}
+
+<div class="page-header">
+    <div class="page-header-icon">🛩️</div>
+    <div>
+        <h1>AIRCRAFT FLEET</h1>
+        <p>Manage your airline's aircraft and registrations</p>
+    </div>
+</div>
+
+<!-- ADD FORM -->
+<div class="card">
+    <div class="card-title">➕ Register New Aircraft</div>
+    <form asp-controller="Aircraft" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Aircraft Model</label>
+                <input type="text" name="Model" required placeholder="e.g., Boeing 747-400" />
+            </div>
+            <div class="form-group">
+                <label>Registration Number</label>
+                <input type="text" name="Regrestration_No" required placeholder="e.g., AP-BHO" />
+            </div>
+            <div class="form-group">
+                <label>Passenger Capacity</label>
+                <input type="number" name="Capacity" required placeholder="e.g., 416" min="1" />
+            </div>
+        </div>
+        <div class="btn-row">
+            <button type="submit" class="btn btn-gold">✈ Register Aircraft</button>
+            <button type="reset"  class="btn btn-ghost">✕ Clear</button>
+        </div>
+    </form>
+</div>
+
+<!-- TABLE -->
+<div class="card">
+    <div class="card-title">🛩 Fleet Registry — @Model.Count() Aircraft</div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#ID</th>
+                    <th>Model</th>
+                    <th>Registration No</th>
+                    <th>Capacity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr class="empty-msg"><td colspan="5">No aircraft registered yet. Add one above.</td></tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><span class="badge badge-silver">@item.Aircraft_ID</span></td>
+                            <td><strong style="color:var(--gold)">@item.Model</strong></td>
+                            <td><span class="badge badge-camel">@item.Regrestration_No</span></td>
+                            <td>@item.Capacity seats</td>
+                            <td>
+                                <form asp-controller="Aircraft" asp-action="Delete" asp-route-id="@item.Aircraft_ID" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-delete" onclick="return confirm('Delete @item.Model?')">🗑 Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

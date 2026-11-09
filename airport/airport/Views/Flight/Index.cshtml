@@ -1,0 +1,143 @@
+@model IEnumerable<airline_system.Models.Flight>
+@{
+    ViewData["Title"] = "Flights";
+    var airports  = ViewBag.Airports  as List<airline_system.Models.Airport>;
+    var aircrafts = ViewBag.Aircrafts as List<airline_system.Models.Aircraft>;
+}
+
+<div class="page-header">
+    <div class="page-header-icon">✈️</div>
+    <div>
+        <h1>FLIGHT SCHEDULE</h1>
+        <p>Manage and track all airline flights</p>
+    </div>
+</div>
+
+<!-- ADD FORM -->
+<div class="card">
+    <div class="card-title">➕ Schedule New Flight</div>
+    <form asp-controller="Flight" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Flight Number</label>
+                <input type="text" name="Flight_No" required placeholder="e.g., SK-101" />
+            </div>
+            <div class="form-group">
+                <label>Aircraft</label>
+                <select name="Aircraft_ID" required>
+                    <option value="">— Select Aircraft —</option>
+                    @if (aircrafts != null)
+                    {
+                        @foreach (var a in aircrafts)
+                        {
+                            <option value="@a.Aircraft_ID">@a.Model (@a.Regrestration_No)</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Origin Airport</label>
+                <select name="Origin_ID" required>
+                    <option value="">— Select Origin —</option>
+                    @if (airports != null)
+                    {
+                        @foreach (var ap in airports)
+                        {
+                            <option value="@ap.Airport_ID">@ap.IATA_Code — @ap.City</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Destination Airport</label>
+                <select name="Dest_ID" required>
+                    <option value="">— Select Destination —</option>
+                    @if (airports != null)
+                    {
+                        @foreach (var ap in airports)
+                        {
+                            <option value="@ap.Airport_ID">@ap.IATA_Code — @ap.City</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Departure Time</label>
+                <input type="datetime-local" name="Dep_Time" required />
+            </div>
+            <div class="form-group">
+                <label>Arrival Time</label>
+                <input type="datetime-local" name="Arr_Time" required />
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select name="Status" required>
+                    <option value="Scheduled">Scheduled</option>
+                    <option value="Delayed">Delayed</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+        </div>
+        <div class="btn-row">
+            <button type="submit" class="btn btn-gold">✈ Schedule Flight</button>
+            <button type="reset"  class="btn btn-ghost">✕ Clear</button>
+        </div>
+    </form>
+</div>
+
+<!-- TABLE -->
+<div class="card">
+    <div class="card-title">✈ All Flights — @Model.Count() Records</div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Flight No</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>Aircraft</th>
+                    <th>Departure</th>
+                    <th>Arrival</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr class="empty-msg"><td colspan="8">No flights scheduled. Add one above.</td></tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        string statusClass = item.Status switch {
+                            "Scheduled" => "badge-blue",
+                            "Delayed"   => "badge-camel",
+                            "Cancelled" => "badge-red",
+                            "Completed" => "badge-green",
+                            _           => "badge-silver"
+                        };
+                        <tr>
+                            <td><strong style="color:var(--gold)">@item.Flight_No</strong></td>
+                            <td><span class="badge badge-gold">@item.OriginAirport?.IATA_Code</span> @item.OriginAirport?.City</td>
+                            <td><span class="badge badge-gold">@item.DestinationAirport?.IATA_Code</span> @item.DestinationAirport?.City</td>
+                            <td>@item.Aircraft?.Model</td>
+                            <td style="font-size:0.85em">@item.Dep_Time.ToString("dd MMM yy HH:mm")</td>
+                            <td style="font-size:0.85em">@item.Arr_Time.ToString("dd MMM yy HH:mm")</td>
+                            <td><span class="badge @statusClass">@item.Status</span></td>
+                            <td>
+                                <form asp-controller="Flight" asp-action="Delete" asp-route-id="@item.Flight_ID" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-delete" onclick="return confirm('Delete flight @item.Flight_No?')">🗑 Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
